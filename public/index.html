@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; }
+        .controls { margin-bottom: 20px; padding: 15px; background: #f4f4f4; border-radius: 5px;}
+        button { padding: 8px 15px; margin-right: 10px; cursor: pointer; }
+        pre { background: #222; color: #0f0; padding: 15px; border-radius: 5px; overflow-x: auto;}
+    </style>
+</head>
+<body>
+
+    <h1>Task Dashboard</h1>
+    
+    <div class="controls">
+        <h3>Filter with Query Strings</h3>
+        <button onclick="fetchTasks('')">All Tasks</button>
+        <button onclick="fetchTasks('?status=pending')">Pending Tasks</button>
+        <button onclick="fetchTasks('?status=completed')">Completed Tasks</button>
+        
+        <hr>
+
+        <h3>Find with URL Parameters</h3>
+        <input type="number" id="taskId" placeholder="Enter Task ID (1-3)">
+        <button onclick="fetchSingleTask()">Find by ID</button>
+    </div>
+
+    <h3>Server Response:</h3>
+    <pre id="output">Click a button to fetch data...</pre>
+
+    <script>
+        const output = document.getElementById('output');
+
+        // Fetches data using Query Strings (e.g., /api/tasks?status=pending)
+        async function fetchTasks(queryString) {
+            try {
+                const response = await fetch(`/api/tasks${queryString}`);
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent = "Error fetching data";
+            }
+        }
+
+        // Fetches data using URL Parameters (e.g., /api/tasks/2)
+        async function fetchSingleTask() {
+            const id = document.getElementById('taskId').value;
+            if (!id) return alert("Please enter an ID");
+
+            try {
+                const response = await fetch(`/api/tasks/${id}`);
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent = "Error fetching data";
+            }
+        }
+    </script>
+</body>
+</html>
